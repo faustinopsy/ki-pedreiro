@@ -1,0 +1,32 @@
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+  background-color: rgba(0, 0, 255, 0.456);
+}
+
+input{
+  font-size: 1rem;
+  font-family: inherit;
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 5px;
+}
+button{
+  font-size: 1rem;
+  font-family: inherit;
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 5px;
+  background-color: #46be0e;
+  color: white;
+  border: 2px rgb(39, 80, 227) solid;
+  cursor: pointer;
+}
