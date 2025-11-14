@@ -3,15 +3,9 @@ class ServicoView {
     constructor() {
         this.servicoModel = new Servico();
     }
-    listarServicos() {
-        return this.servicoModel.listar();
-    }
-    mostrarDetalhes(id) {
-        return this.servicoModel.buscarPorId(id);
-    }
     renderizar(){
-        const servicos = this.listarServicos();
-        let html = '<ul>';
+        const servicos = this.servicoModel.listar();
+        let html = '<ul class="container">';
         servicos.forEach(servico => {
             html += `<li>${servico.nome}</li>`;
         });

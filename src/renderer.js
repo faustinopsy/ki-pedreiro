@@ -1,9 +1,14 @@
 import './index.css';
-import UsuarioView from './Views/UsuarioView';
+import UsuarioController from './Controllers/UsuarioController';
 import ServicoView from './Views/ServicoView';
+import Configuracoes from './Services/Configuracoes';
+const configuracoes = new Configuracoes();
+configuracoes.modoEscuro();
+configuracoes.inicarEventos();
+await configuracoes.mostrarVersao();
 
 const rotas = {
-    '/usuarios': UsuarioView,
+    '/usuarios': UsuarioController,
     '/servicos': ServicoView,
 }
 
@@ -12,7 +17,7 @@ function navegarPara(rota) {
     document.getElementById('app').innerHTML = ViewClass.renderizar();
     
   }
-const rotaAtual = window.location.hash.replace('#', '/') || '/servicos';
+const rotaAtual =  '/servicos';
 window.location.hash = rotaAtual;
 navegarPara(rotaAtual);
 

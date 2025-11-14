@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html data-theme="cupcake">
   <head>
     <meta charset="UTF-8" />
     <title>Desktop kipedreiro</title>
@@ -9,7 +9,13 @@
       <ul>
         <li><a href="#usuarios">Usuarios</a></li>
         <li><a href="#servicos">Servicos</a></li>
+        <button id="toggle-dark-mode">Dark Mode</button>
+        <p id="theme-source"></p>
+        <p id="versao-app"></p>
+        <p>Conexão: <strong id='status'></strong></p>
+
       </ul>
+      
     </nav>
    <div id="app"></div>
     <script type="module" src="/src/renderer.js"></script>
