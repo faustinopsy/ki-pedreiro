@@ -1,20 +1,23 @@
 import './index.css';
-import ServicosView from './Views/ServicosView.js';
-import UsuariosView from './Views/UsuariosView.js';
-const servicosView = new ServicosView();
-const usuariosView = new UsuariosView();
+import UsuarioController from './Controllers/UsuarioController.js'
+import ServicoController from './Controllers/ServicoController.js'
+
 const rotas = {
-  '/servicos': servicosView,
-  '/usuarios': usuariosView,
+  '/servicos': ServicoController,
+  '/usuarios': UsuarioController,
 };
 function navegarPara(rota){
-  console.log(rota)
-  //                                    2º envia a url = hash
-  document.querySelector('#app').innerHTML = rotas[rota].renderizar();
+                            //usuarios
+  const controller = new rotas[rota]();
+                  // new UsuarioController()
+  //                 2º envia a url = hash
+  document.querySelector('#app').innerHTML = controller.listar();
 }
 
 window.addEventListener('hashchange', () => {
+  // chegou #usuarios
   const rota = window.location.hash.replace('#', '/');
+  // se trasforma em /usuarios
   navegarPara(rota);
 });
 //1º envia a url = hash
