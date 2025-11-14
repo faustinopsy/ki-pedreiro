@@ -1,6 +1,10 @@
 import './index.css';
 import UsuarioController from './Controllers/UsuarioController.js'
 import ServicoController from './Controllers/ServicoController.js'
+import Configuracao from './Services/Configuracao.js';
+
+const config = new Configuracao();
+await config.modoEscuro();
 
 const rotas = {
   '/servicos': ServicoController,
