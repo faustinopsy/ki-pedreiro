@@ -1,9 +1,7 @@
 class UsuariosView{
-    constructor(Usuarios){
-        this.usuarios = Usuarios;
+    constructor(){
     }
-    renderizar(){
-        const Usuarios = this.usuarios.listar();
+    renderizar(Usuarios){
         let container ='<div class="container">';
         Usuarios.forEach(usuario => {
             container += `<div> ${usuario.nome} - ${usuario.idade} </div><br/>`

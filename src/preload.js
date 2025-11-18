@@ -7,3 +7,7 @@ contextBridge.exposeInMainWorld(
         toggle: () => ipcRenderer.invoke('dark-mode:toggle')
     }
 )
+contextBridge.exposeInMainWorld('api', {
+  listarUsuarios: () => ipcRenderer.invoke('usuarios:listar'),
+  listarServicos: () => ipcRenderer.invoke('servicos:listar')
+});

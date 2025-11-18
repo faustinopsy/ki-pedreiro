@@ -1,23 +1,21 @@
 import './index.css';
-import UsuarioController from './Controllers/UsuarioController.js'
-import ServicoController from './Controllers/ServicoController.js'
-import Configuracao from './Services/Configuracao.js';
-
+import Configuracao from './Renderer/Services/Configuracao.js';
+import Rotas from './Renderer/Services/Rotas.js';
 const config = new Configuracao();
 await config.modoEscuro();
 
-const rotas = {
-  '/servicos': ServicoController,
-  '/usuarios': UsuarioController,
-};
-function navegarPara(rota){
-                            //usuarios
-  const controller = new rotas[rota]();
-                  // new UsuarioController()
-  //                 2º envia a url = hash
-  document.querySelector('#app').innerHTML = controller.listar();
-}
+const mapaDeRotas = new Rotas();
+const rotas = mapaDeRotas.rotas();
 
+async function navegarPara(rota) {
+  if (!rotas[rota]) {
+    document.querySelector('#app').innerHTML = '<h1>404 - Página não encontrada</h1>';
+    return;
+  }
+  document.querySelector('#app').innerHTML = '<h1>Carregando...</h1>';
+  const html = await rotas[rota]();
+  document.querySelector('#app').innerHTML = html;
+}
 window.addEventListener('hashchange', () => {
   // chegou #usuarios
   const rota = window.location.hash.replace('#', '/');

@@ -1,11 +1,9 @@
 class ServicosView{
-    constructor(servicos){
-        this.servicos = servicos;
+    constructor(){
     }
-    renderizar(){
-        const servicos = this.servicos.listar();
+    renderizar(Servicos){
         let container ='<div class="container">';
-        servicos.forEach(servico => {
+        Servicos.forEach(servico => {
             container += `<div> ${servico.nome} - ${servico.preço} </div><br/>`
         });
         container += '</div>';
