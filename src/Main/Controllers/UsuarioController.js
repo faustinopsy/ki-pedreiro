@@ -6,6 +6,8 @@ class UsuarioController{
     listar(){
         return this.usuarioModel.listar();
     }
-
+    adicionar(dados){
+        return this.usuarioModel.adicionar(dados);
+    }
 }
 export default UsuarioController;

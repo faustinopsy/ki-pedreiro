@@ -15,7 +15,7 @@ const createWindow = () => {
     width: 1200,
     height: 600,
     transparent: false,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     resizable: true,
     fullscreen: false,
     frame: true,
@@ -43,16 +43,8 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-
-});
-
+  
+  
 ipcMain.handle('dark-mode:toggle', () => {
   if (nativeTheme.shouldUseDarkColors) {
     nativeTheme.themeSource = 'light'
@@ -63,14 +55,32 @@ ipcMain.handle('dark-mode:toggle', () => {
 })
 
 ipcMain.handle('usuarios:listar', async () => {
-  // Chama o método do controller (que chama o model)
   return usuarioController.listar();
 });
 
-// Handler para listar serviços
+ipcMain.handle('usuarios:salvar', async (event, dados) => {
+    console.log('[Main] Recebido pedido usuarios:salvar com dados:', dados);
+    try {
+      const novoUsuario = usuarioController.adicionar(dados);
+      return { success: true, usuario: novoUsuario };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
 ipcMain.handle('servicos:listar', async () => {
   return servicoController.listar();
 });
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+
+});
+
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

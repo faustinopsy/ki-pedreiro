@@ -1,26 +1,25 @@
 import './index.css';
-import Configuracao from './Renderer/Services/Configuracao.js';
 import Rotas from './Renderer/Services/Rotas.js';
+import Configuracao from './Renderer/Services/Configuracao.js';
 const config = new Configuracao();
 await config.modoEscuro();
-
-const mapaDeRotas = new Rotas();
-const rotas = mapaDeRotas.rotas();
-
+config.verificarConexao();
+const appDiv = document.getElementById('app');
+const roteador = new Rotas();
 async function navegarPara(rota) {
-  if (!rotas[rota]) {
-    document.querySelector('#app').innerHTML = '<h1>404 - Página não encontrada</h1>';
-    return;
+  const pagina = roteador.getPagina(rota); 
+  if (pagina) {
+    appDiv.innerHTML = '<h1>Carregando...</h1>';
+    const html = await pagina.render();
+    appDiv.innerHTML = html;
+    pagina.adicionarEventos();
+  } else {
+    appDiv.innerHTML = '<h1>404 - Página não encontrada</h1>';
   }
-  document.querySelector('#app').innerHTML = '<h1>Carregando...</h1>';
-  const html = await rotas[rota]();
-  document.querySelector('#app').innerHTML = html;
 }
 window.addEventListener('hashchange', () => {
-  // chegou #usuarios
   const rota = window.location.hash.replace('#', '/');
-  // se trasforma em /usuarios
   navegarPara(rota);
 });
-//1º envia a url = hash
-navegarPara('/servicos');
+const rotaInicial = window.location.hash.replace('#', '/') || '/servicos';
+navegarPara(rotaInicial);
