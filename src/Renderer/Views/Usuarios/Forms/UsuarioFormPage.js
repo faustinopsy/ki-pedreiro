@@ -5,8 +5,11 @@ class UsuarioFormPage {
     this.view = new UsuariosView();
   }
 
-  async montarPagina(id = null) {
+  async renderizarFormulario(id = null) {
     this.idEdicao = id;
+    setTimeout(() => {
+            this.adicionarEventos();
+        }, 0);
     return this.view.formulario();
   }
 

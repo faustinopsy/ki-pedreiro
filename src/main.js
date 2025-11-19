@@ -76,6 +76,15 @@ ipcMain.handle('usuarios:buscarPorId', async (event, id) => {
     return usuarioController.buscarPorId(id);
 });
 
+ipcMain.handle('usuarios:remover', async (event, id) => {
+    const usuario = usuarioController.buscarPorId(id);
+    if (usuario) {
+      usuarioController.remover(usuario);
+      return { success: true };
+    }
+    return { success: false, error: 'Usuário não encontrado' };
+});
+
 ipcMain.handle('usuarios:atualizar', async (event, usuario) => {
     try {
       return usuarioController.atualizar(usuario);

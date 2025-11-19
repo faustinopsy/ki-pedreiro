@@ -20,5 +20,8 @@ class UsuarioController{
         
         return { success: true };
     }
+    remover(usuario) {
+        this.usuarioModel.remover(usuario);
+    }
 }
 export default UsuarioController;

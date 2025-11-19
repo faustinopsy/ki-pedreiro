@@ -1,25 +1,23 @@
 import './index.css';
 import Rotas from './Renderer/Services/Rotas.js';
 import Configuracao from './Renderer/Services/Configuracao.js';
+
 const config = new Configuracao();
 await config.modoEscuro();
-config.verificarConexao();
-const appDiv = document.getElementById('app');
-const roteador = new Rotas();
-async function navegarPara(rota) {
-  const pagina = roteador.getPagina(rota); 
-  if (pagina) {
-    appDiv.innerHTML = '<h1>Carregando...</h1>';
-    const html = await pagina.render();
-    appDiv.innerHTML = html;
-    pagina.adicionarEventos();
-  } else {
-    appDiv.innerHTML = '<h1>404 - Página não encontrada</h1>';
-  }
+
+const rota_mapeada = new Rotas();
+
+async function navegarPara(rota){
+                       //      /usuario_listar
+  const html = await rota_mapeada.getPage(rota);
+  document.querySelector('#app').innerHTML = html;
 }
-window.addEventListener('hashchange', () => {
+
+window.addEventListener('hashchange', async () => {
+  // chegou #usuarios
   const rota = window.location.hash.replace('#', '/');
-  navegarPara(rota);
+  // se trasforma em /usuarios
+  await navegarPara(rota);
 });
-const rotaInicial = window.location.hash.replace('#', '/') || '/servicos';
-navegarPara(rotaInicial);
+//1º envia a url = hash
+navegarPara('/usuario_listar');

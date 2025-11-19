@@ -1,5 +1,5 @@
-import UsuarioListar from "../Views/Usuario/listar/UsuarioListar.js"
-import UsuarioForm from "../Views/Usuario/form/UsuarioForm.js"
+import UsuarioListar from "../Views/Usuarios/Listas/UsuarioListPage.js"
+import UsuarioForm from "../Views/Usuarios/Forms/UsuarioFormPage.js"
 class Rotas {
     constructor(){
         this.rotas={
@@ -12,6 +12,7 @@ class Rotas {
         }
     }
     async getPage(rota){
+      console.log(rota)
         // /usuario_listar
             // UsuarioListar()
         return await this.rotas[rota]();

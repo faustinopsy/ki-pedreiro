@@ -1,29 +1,49 @@
-class UsuariosView{
-    constructor(){
-    }
-    renderizar(Usuarios){
-        let container ='<div class="container">';
-        Usuarios.forEach(usuario => {
-            container += `
-            <li>
-            ${usuario.nome} (Idade: ${usuario.idade})
-                <button class="btn-editar" data-id="${usuario.id}">Editar</button>
-                <button class="btn-remover" data-id="${usuario.id}">Remover</button>
-            </li>`;
-            
-        });
-        container += '</div>';
-        return container;
-    }
-    formulario(){
-        return `<form id="form-add-usuario">
-        <label>Nome:</label>
-        <input type="text" name="nome" id="nome">
-        <label>Idade:</label>
-        <input type="number" name="idade" id="idade">
-        <button type="submit">Enviar</button>
-        </form>`;
+class UsuariosView {
+  renderizar(usuarios) {
+    let html = `
+      <div class="toolbar">
+        <h2>Gerenciar Usuários</h2>
+        <button id="btn-novo-usuario">Novo Usuário</button>
+      </div>
+      <hr>
+    `;
 
-    }
+    html += '<ul class="container">';
+    usuarios.forEach(u => {
+      html += `
+        <li>
+          ${u.nome} (${u.idade} anos)<a class="btn-editar" data-id="${u.id}">Editar</a> <a class="btn-remover" data-id="${u.id}">Excluir</a>
+        </li>`;
+    });
+    html += '</ul>';
+
+    html += `
+      <div id="modal-usuario" class="modal-overlay hidden">
+        <div class="modal-content">
+          <h3 id="modal-titulo">Usuário</h3>
+          <form id="form-usuario">
+            <input type="hidden" id="usuario-id">
+            
+            <div class="campo">
+              <label>Nome:</label>
+              <input type="text" id="usuario-nome" required>
+            </div>
+            
+            <div class="campo">
+              <label>Idade:</label>
+              <input type="number" id="usuario-idade" required>
+            </div>
+
+            <div class="acoes">
+              <button type="submit">Salvar</button>
+              <button type="button" id="btn-cancelar">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
 }
 export default UsuariosView;
