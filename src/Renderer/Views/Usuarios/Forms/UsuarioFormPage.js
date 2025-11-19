@@ -1,33 +1,53 @@
 import UsuariosView from '../UsuariosView.js';
+
 class UsuarioFormPage {
   constructor() {
     this.view = new UsuariosView();
   }
-  render() {
+
+  async montarPagina(id = null) {
+    this.idEdicao = id;
     return this.view.formulario();
   }
-  adicionarEventos() {
+
+  async adicionarEventos(id = null) {
     const form = document.getElementById('form-add-usuario');
+    if (id) {
+      document.querySelector('h3').innerText = 'Editar Usuário';
+      const usuario = await window.api.buscarUsuarioPorId(id);
+      if (usuario) {
+        document.getElementById('usuario-nome').value = usuario.nome;
+        document.getElementById('usuario-idade').value = usuario.idade;
+      }
+    }
+
     if (form) {
-      form.addEventListener('submit', this.eventoSalvarUsuario.bind(this));
+      form.addEventListener('submit', this.handleSalvar.bind(this));
     }
   }
-  async eventoSalvarUsuario(event) {
+
+  async handleSalvar(event) {
     event.preventDefault();
-    const nome = document.getElementById('nome').value;
-    const idade = parseInt(document.getElementById('idade').value, 10);
-    if (!nome || !idade) {
-      alert('Preencha os campos!');
-      return;
-    }
-    const resultado = await window.api.adicionarUsuario({ nome, idade });
-    if (resultado.success) {
-      alert('Usuário salvo!');
-      document.getElementById('form-add-usuario').reset();
-      window.location.hash = '#usuarios';
+    const nome = document.getElementById('usuario-nome').value;
+    const idade = document.getElementById('usuario-idade').value;
+    
+    const dados = { nome, idade };
+    let resultado;
+
+    if (this.idEdicao) {
+      dados.id = this.idEdicao;
+      resultado = await window.api.atualizarUsuario(dados);
     } else {
-      alert(`Erro ao salvar: ${resultado.error}`);
+      resultado = await window.api.adicionarUsuario(dados);
+    }
+
+    if (resultado.success) {
+      alert(this.idEdicao ? 'Usuário atualizado!' : 'Usuário criado!');
+      window.location.hash = '#/usuarios';
+    } else {
+      alert('Erro: ' + resultado.error);
     }
   }
 }
+
 export default UsuarioFormPage;

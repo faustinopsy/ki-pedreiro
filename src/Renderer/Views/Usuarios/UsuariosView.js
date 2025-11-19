@@ -4,7 +4,13 @@ class UsuariosView{
     renderizar(Usuarios){
         let container ='<div class="container">';
         Usuarios.forEach(usuario => {
-            container += `<div> ${usuario.nome} - ${usuario.idade} </div><br/>`
+            container += `
+            <li>
+            ${usuario.nome} (Idade: ${usuario.idade})
+                <button class="btn-editar" data-id="${usuario.id}">Editar</button>
+                <button class="btn-remover" data-id="${usuario.id}">Remover</button>
+            </li>`;
+            
         });
         container += '</div>';
         return container;

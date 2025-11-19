@@ -9,7 +9,12 @@ class UsuarioListPage {
     return this.view.renderizar(dados);
   }
   adicionarEventos() {
-    console.log('Eventos da Lista de Usuários ativados.');
+    this.appDiv.addEventListener('click', (e) => {
+    if (e.target && e.target.classList.contains('btn-editar')) {
+      const id = e.target.getAttribute('data-id');
+      window.location.hash = `#/formulario-usuarios/${id}`;
+    }
+});
   }
 }
 export default UsuarioListPage;

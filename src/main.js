@@ -72,6 +72,18 @@ ipcMain.handle('servicos:listar', async () => {
   return servicoController.listar();
 });
 
+ipcMain.handle('usuarios:buscarPorId', async (event, id) => {
+    return usuarioController.buscarPorId(id);
+});
+
+ipcMain.handle('usuarios:atualizar', async (event, usuario) => {
+    try {
+      return usuarioController.atualizar(usuario);
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+});
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
