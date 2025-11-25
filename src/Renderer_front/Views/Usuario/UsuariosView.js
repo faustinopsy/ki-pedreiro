@@ -20,14 +20,15 @@ class UsuariosView{
                             </tr>`;
         Usuarios.forEach(usuario => { // data = atributto
             container += `<tr><td> ${usuario.nome} </td><td> ${usuario.idade} </td><td> 
-            <button id="editar-user" data-id="${usuario.id}">Editar</button>
-            <button id="excluir-user" data-id="${usuario.id}">Excluir</button> </td><tr>`
+            <button class="editar-user" data-id="${usuario.id}">Editar</button>
+            <button class="excluir-user" data-id="${usuario.id}">Excluir</button> </td><tr>`
         });
         container += `</table></div>
         <div id="myModal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" id="fechar">&times;</span>
                 <form id="form-usuario">
+                    <input type="text" id="id" hidden/>
                     <label>Nome:</label>
                     <input type="text" id="nome"/>
                     <label>Idade:</label>
@@ -50,6 +51,16 @@ class UsuariosView{
                     <button>Salvar</button>
                 </form>`
 
+    }
+
+    abrirModal(){
+        const modal = document.getElementById("myModal")
+        modal.style.display = "block"
+    }
+
+    fecharModal(){
+        const modal = document.getElementById("myModal")
+        modal.style.display = "none"
     }
 }
 export default UsuariosView;

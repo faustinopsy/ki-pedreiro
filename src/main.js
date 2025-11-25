@@ -61,6 +61,9 @@ ipcMain.handle('dark-mode:toggle', () => {
   return nativeTheme.shouldUseDarkColors
 })
 
+ipcMain.handle("usuarios:buscarPorId", async (event, id) => {
+  return await controlerUsuario.buscarUsuarioPorId(id);
+})
 
 ipcMain.handle("usuarios:listar", async () => {
   return await controlerUsuario.listar();
@@ -71,7 +74,10 @@ ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
    return resultado;
 })
 
-
+ipcMain.handle("usuarios:editar", async (event, usuario) => {
+   const resultado = await controlerUsuario.atualizarUsuario(usuario);
+   return resultado;
+})
 
 });
 

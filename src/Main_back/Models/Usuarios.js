@@ -12,6 +12,14 @@ class Usuarios {
   async listar() {
     return this.Usuarios;
   }
+  async buscarPorId(id){
+    return this.Usuarios.find(usuario => usuario.id === Number(id))
+  }
+  async atualizar(usuarioAtualizado){
+    const index = this.Usuarios.indexOf(usuarioAtualizado);
+    this.Usuarios[index] = {...this.Usuarios[index], ...usuarioAtualizado} 
+  }
+
   remover(usuario) {
     const index = this.Usuarios.indexOf(usuario);
     if (index !== -1) {
