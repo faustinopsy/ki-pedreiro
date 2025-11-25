@@ -23,7 +23,22 @@ class UsuariosView{
             <button id="editar-user" data-id="${usuario.id}">Editar</button>
             <button id="excluir-user" data-id="${usuario.id}">Excluir</button> </td><tr>`
         });
-        container += '</table></div>';
+        container += `</table></div>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="form-usuario">
+                    <label>Nome:</label>
+                    <input type="text" id="nome"/>
+                    <label>Idade:</label>
+                    <input type="number" id="idade"/>
+                    <button>Salvar</button>
+                </form>
+            </div>
+        </div>
+
+        
+        `;
         return container;
     }
     renderizarFomulario(){
