@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
+  "type": "module",
   "scripts": {
     "dev": "electron-forge start",
     "package": "electron-forge package",
@@ -31,7 +32,9 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "electron-squirrel-startup": "^1.0.1",
+    "sqlite3": "^5.1.7",
     "sweetalert2": "^11.26.3"
   }
 }
