@@ -1,30 +1,54 @@
+import db from '../database/index.js';
+import { randomUUID } from 'node:crypto'; 
+
 class Usuarios {
-  constructor() {
-    this.Usuarios = [
-      {"id": 1,"nome": "jose", "idade": 26},
-      {"id": 2,"nome": "maria", "idade": 35},
-      {"id": 3,"nome": "xssss", "idade": 15},
-    ];
+  constructor() {}
+    
+  getDataAtual() {
+    return new Date().toISOString();
   }
   adicionar(usuario) {
-    this.Usuarios.push(usuario);
-  }
-  async listar() {
-    return this.Usuarios;
-  }
-  async buscarPorId(id){
-    return this.Usuarios.find(usuario => usuario.id === Number(id))
-  }
-  async atualizar(usuarioAtualizado){
-    const index = this.Usuarios.indexOf(usuarioAtualizado);
-    this.Usuarios[index] = {...this.Usuarios[index], ...usuarioAtualizado} 
+    const stmt = db.prepare(`
+      INSERT INTO usuarios (uuid, nome, idade, sync_status, atualizado_em) 
+      VALUES (?, ?, ?, 0, ?)
+    `);
+    const uuid = usuario.uuid || randomUUID();
+    const dataAtual = this.getDataAtual();
+    const info = stmt.run(uuid, usuario.nome, usuario.idade, dataAtual);
+    return { id: info.lastInsertRowid, uuid: uuid, ...usuario };
   }
 
-  remover(usuario) {
-    const index = this.Usuarios.indexOf(usuario);
-    if (index !== -1) {
-      this.Usuarios.splice(index, 1);
-    }
+  listar() {
+    const stmt = db.prepare('SELECT * FROM usuarios WHERE excluido_em IS NULL');
+    return stmt.all();
+  }
+
+  buscarPorId(id) {
+    const stmt = db.prepare('SELECT * FROM usuarios WHERE id = ? AND excluido_em IS NULL');
+    return stmt.get(id);
+  }
+
+  atualizar(usuario) {
+    const stmt = db.prepare(`
+      UPDATE usuarios 
+      SET nome = ?, idade = ?, sync_status = 0, atualizado_em = ?
+      WHERE id = ?
+    `);
+    const dataAtual = this.getDataAtual();
+    const info = stmt.run(usuario.nome, usuario.idade, dataAtual, usuario.id);
+    return info.changes > 0;
+  }
+
+  remover(id) {
+    const stmt = db.prepare(`
+      UPDATE usuarios 
+      SET excluido_em = ?, sync_status = 0, atualizado_em = ?
+      WHERE id = ?
+    `);
+    const dataAtual = this.getDataAtual();
+    const info = stmt.run(dataAtual, dataAtual, id);
+    return info.changes > 0;
   }
 }
+
 export default Usuarios;

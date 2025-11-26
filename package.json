@@ -31,7 +31,9 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "better-sqlite3": "^12.4.6",
     "electron-squirrel-startup": "^1.0.1",
+    "sqlite3": "^5.1.7",
     "sweetalert2": "^11.26.3"
   }
 }
