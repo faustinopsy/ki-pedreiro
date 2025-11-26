@@ -1,4 +1,4 @@
-import db from '../database/index.js';
+import db from '../database/db.js';
 import { randomUUID } from 'node:crypto'; 
 
 class Usuarios {
