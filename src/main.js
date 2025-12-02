@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme,net } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import UsuarioController from './Main_back/Controllers/UsuarioController.js';
 import ServicoController from './Main_back/Controllers/ServicoController.js';
 import { initDatabase } from './Main_back/Database/db.js';
+import SyncService from './Main_back/Services/SyncService.js';
 if (started) {
   app.quit();
 }
@@ -78,9 +79,22 @@ ipcMain.handle("usuarios:editar", async (event, usuario) => {
    return resultado;
 })
 
+
+// ipcMain.handle('app:sincronizar', async () => {
+//   console.log('[Main] Iniciando sincronização manual...');
+//   return await SyncService.sincronizar();
+// });
+
+async function sincronizarSeOnline() {
+  const isOnline = net.isOnline();
+  if (isOnline) {
+    console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
+    const dados =  await SyncService.sincronizar(); 
+     await controlerUsuario.cadastrarLocalmente(dados) 
+  }
+}
+sincronizarSeOnline();
 });
-
-
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.

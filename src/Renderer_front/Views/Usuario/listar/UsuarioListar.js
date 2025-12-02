@@ -22,11 +22,11 @@ class UsuarioListar{
                 console.log("editar usuario id:", idUsuario);
                 const usuario = await window.api.buscarporid(idUsuario)
                  const id = document.getElementById("id")
-                const nome = document.getElementById("nome")
-                const idade = document.getElementById("idade")
+                const nome_usuario = document.getElementById("nome_usuario")
+                const email_usuario = document.getElementById("email_usuario")
                 id.value = usuario.uuid
-                nome.value = usuario.nome
-                idade.value = usuario.idade
+                nome_usuario.value = usuario.nome_usuario
+                email_usuario.value = usuario.email_usuario
                 this.view.abrirModal();
             }
              if(e.target.classList.contains("excluir-user")){
@@ -51,18 +51,18 @@ class UsuarioListar{
             event.preventDefault();
             console.log(event)
             const id = document.getElementById('id');
-            const nome = document.getElementById('nome');
-            const idade = document.getElementById('idade');
+            const nome_usuario = document.getElementById('nome_usuario');
+            const email_usuario = document.getElementById('email_usuario');
             const usuario = {
                 uuid: id.value,
-                nome: nome.value,
-                idade: idade.value
+                nome_usuario: nome_usuario.value,
+                email_usuario: email_usuario.value
             }
             console.log(usuario)
             const resultado = await window.api.editarUsuario(usuario);
            if(resultado){
-             nome.value = '';
-             idade.value = '';
+             nome_usuario.value = '';
+             email_usuario.value = '';
              this.mensagem.sucesso("Atualizado com sucesso!");
            }else{
              this.mensagem.erro("Erro ao atualizar!");

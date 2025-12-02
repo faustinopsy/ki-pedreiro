@@ -9,18 +9,38 @@ class UsuarioController{
         return dados
     }
     async cadastrar(usuario){
-        if(!usuario.nome || !usuario.idade){
+        if(!usuario.nome_usuario || !usuario.email_usuario){
             return false;
         }
         this.usuarioModel.adicionar(usuario);
         return true;
     }
+    async cadastrarLocalmente(dados) {
+        if (!dados || !dados.dados?.data?.data) {
+            return false;
+        }
+        const usuariosExistentes = await this.usuarioModel.listarSincronizados();
+        for (const usuario of dados.dados.data.data) {
+            const emailAtual = usuario.email_usuario?.trim().toLowerCase();
+            if (!emailAtual) continue;
+            const jaExiste = usuariosExistentes.some(usuarioExistente => {
+                return usuarioExistente.email_usuario.trim().toLowerCase() === emailAtual;
+            });
+            if (!jaExiste) {
+                await this.usuarioModel.cadastrarLocalmente(usuario);
+                console.log(`Usuário cadastrado localmente: ${emailAtual}`);
+            } else {
+                console.log(`Usuário já existe localmente (pulando): ${emailAtual}`);
+            }
+        }
+        return true;
+    }
     async atualizarUsuario(usuario){
-        if(!usuario.nome || !usuario.idade){
+        if(!usuario.nome_usuario || !usuario.email_usuario){
             return false;
         }
         console.log('chegou no controller',usuario)
-        const usuarioExistente = await this.usuarioModel.buscarPorId(usuario.uuid);
+        const usuarioExistente = await this.usuarioModel.buscarPorUUID(usuario.uuid);
         console.log('usuario retornado da model',usuarioExistente)
         if(!usuarioExistente){
             return false;
@@ -34,12 +54,12 @@ class UsuarioController{
         if(!id){
             return false
         }
-       return this.usuarioModel.buscarPorId(id)
+       return this.usuarioModel.buscarPorUUID(id)
     }
 
 
     async removerUsuario(uuid){
-        const usuarioExistente = await this.usuarioModel.buscarPorId(uuid);
+        const usuarioExistente = await this.usuarioModel.buscarPorUUID(uuid);
         if(!usuarioExistente){
             return false
         }

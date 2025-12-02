@@ -16,10 +16,10 @@ class UsuariosView{
         let container = `<div style="overflow-x:auto;" id="container">
                             <table>
                             <tr>
-                              <th>Nome</th><th>Idade</th><th>ações</th>
+                              <th>nome_usuario</th><th>email_usuario</th><th>ações</th>
                             </tr>`;
         Usuarios.forEach(usuario => { // data = atributto
-            container += `<tr><td> ${usuario.nome} </td><td> ${usuario.idade} </td><td> 
+            container += `<tr><td> ${usuario.nome_usuario} </td><td> ${usuario.email_usuario} </td><td> 
             <button class="editar-user" data-id="${usuario.uuid}">Editar</button>
             <button class="excluir-user" data-id="${usuario.uuid}">Excluir</button> </td><tr>`
         });
@@ -29,10 +29,10 @@ class UsuariosView{
                 <span class="close" id="fechar">&times;</span>
                 <form id="form-usuario">
                     <input type="text" id="id" hidden/>
-                    <label>Nome:</label>
-                    <input type="text" id="nome"/>
-                    <label>Idade:</label>
-                    <input type="number" id="idade"/>
+                    <label>nome_usuario:</label>
+                    <input type="text" id="nome_usuario"/>
+                    <label>email_usuario:</label>
+                    <input type="email" id="email_usuario"/>
                     <button>Salvar</button>
                 </form>
             </div>
@@ -44,10 +44,10 @@ class UsuariosView{
     }
     renderizarFomulario(){
         return `<form id="form-usuario">
-                    <label>Nome:</label>
-                    <input type="text" id="nome"/>
-                    <label>Idade:</label>
-                    <input type="number" id="idade"/>
+                    <label>nome_usuario:</label>
+                    <input type="text" id="nome_usuario"/>
+                    <label>email_usuario:</label>
+                    <input type="email" id="email_usuario"/>
                     <button>Salvar</button>
                 </form>`
 
