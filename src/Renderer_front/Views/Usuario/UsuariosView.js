@@ -44,10 +44,15 @@ class UsuariosView{
     }
     renderizarFomulario(){
         return `<form id="form-usuario">
-                    <label>nome_usuario:</label>
+                    <label>Nome:</label>
                     <input type="text" id="nome_usuario"/>
-                    <label>email_usuario:</label>
+                    <label>E-mail:</label>
                     <input type="email" id="email_usuario"/>
+                    <label>Tipo de usuário:</label>
+                    <select id="tipo_usuario">
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
                     <button>Salvar</button>
                 </form>`
 
