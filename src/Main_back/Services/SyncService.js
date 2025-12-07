@@ -74,12 +74,12 @@ class SyncService {
 
         const jsonResponse = await response.json();
         if (jsonResponse.status === 'success') {
-          console.log(`[Sync Upload] Sucesso: ${usuario.nome}`);
+          console.log(`[Sync Upload] Sucesso: ${usuario.nome_usuario} sincronizado.`);
           this.usuarioModel.marcarComoSincronizado(usuario.uuid);
         }
 
       } catch (error) {
-        console.error(`[Sync Upload] Falha de rede ao enviar ${usuario.nome}:`, error.message);
+        console.error(`[Sync Upload] Falha de rede ao enviar ${usuario.nome_usuario}:`, error.message);
       }
     }
   }
