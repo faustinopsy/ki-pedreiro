@@ -1,7 +1,7 @@
 import { net } from 'electron';
 import UsuarioModel from '../Models/Usuarios.js';
 
-const API_URL = 'http://localhost:8080/backend/api/';
+const API_URL = 'http://localhost:8000/backend/api/';
 
 class SyncService {
   constructor() {

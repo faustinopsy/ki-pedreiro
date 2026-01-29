@@ -95,7 +95,7 @@ async function sincronizarSeOnline() {
 }
 sincronizarSeOnline();
 
-const INTERVALO_SYNC =  1000 * 60 * 10; // 10 minutos
+const INTERVALO_SYNC =  1000 * 60 * 1; 
 
   const syncInterval = setInterval(async () => {
     console.log('[Main] Ciclo de auto-sync iniciado...');
