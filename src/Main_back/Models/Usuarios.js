@@ -30,9 +30,42 @@ class Usuarios {
     stmt.run(uuid, usuarioRemoto.nome_usuario, usuarioRemoto.email_usuario, usuarioRemoto.tipo_usuario);
 
   }
-  async listar() {
-    const stmt = db.prepare(`SELECT * FROM usuarios WHERE excluido_em IS NULL`);
-    return stmt.all();
+  async listar(params = {}) {
+    const { page = 1, limit = 10, search = '' } = params;
+    const offset = (page - 1) * limit;
+
+    let query = `SELECT * FROM usuarios WHERE excluido_em IS NULL`;
+    let countQuery = `SELECT COUNT(*) as total FROM usuarios WHERE excluido_em IS NULL`;
+
+    const bindings = [];
+
+    if (search) {
+      const searchTerm = `%${search}%`;
+      const whereClause = ` AND (nome_usuario LIKE ? OR email_usuario LIKE ?)`;
+      query += whereClause;
+      countQuery += whereClause;
+      bindings.push(searchTerm, searchTerm);
+    }
+
+    query += ` ORDER BY nome_usuario ASC LIMIT ? OFFSET ?`;
+
+    try {
+      const totalResult = db.prepare(countQuery).get(...bindings);
+      const total = totalResult ? totalResult.total : 0;
+
+      const data = db.prepare(query).all(...bindings, limit, offset);
+
+      return {
+        data,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      };
+    } catch (error) {
+      console.error("Erro ao listar usuários:", error);
+      throw error;
+    }
   }
   async buscarPorUUID(uuid) {
     console.log(uuid);

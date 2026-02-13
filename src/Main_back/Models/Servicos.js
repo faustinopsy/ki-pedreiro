@@ -1,14 +1,41 @@
 import db from '../Database/db.js';
 
 class Servicos {
-  listar() {
+  listar(params = {}) {
+    const { page = 1, limit = 10, search = '' } = params;
+    const offset = (page - 1) * limit;
+
     try {
-      const query = `
+      let query = `
         SELECT * FROM servicos 
         WHERE excluido_em IS NULL 
-        ORDER BY nome_servico ASC
       `;
-      return db.prepare(query).all();
+      let countQuery = `SELECT COUNT(*) as total FROM servicos WHERE excluido_em IS NULL`;
+
+      const bindings = [];
+
+      if (search) {
+        const searchTerm = `%${search}%`;
+        const whereClause = ` AND (nome_servico LIKE ? OR descricao_servico LIKE ?)`;
+        query += whereClause;
+        countQuery += whereClause;
+        bindings.push(searchTerm, searchTerm);
+      }
+
+      query += ` ORDER BY nome_servico ASC LIMIT ? OFFSET ?`;
+
+      const totalResult = db.prepare(countQuery).get(...bindings);
+      const total = totalResult ? totalResult.total : 0;
+
+      const data = db.prepare(query).all(...bindings, limit, offset);
+
+      return {
+        data,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      };
     } catch (error) {
       console.error('Erro ao listar serviços:', error);
       throw error;

@@ -65,14 +65,22 @@ app.whenReady().then(() => {
     return await controlerUsuario.removerUsuario(uuid);
   })
 
-  ipcMain.handle("usuarios:listar", async () => {
-    return await controlerUsuario.listar();
+  ipcMain.handle("usuarios:listar", async (event, params) => {
+    return await controlerUsuario.listar(params);
   })
 
   ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
-    const resultado = await controlerUsuario.cadastrar(usuario);
-    return resultado;
+    return await controlerUsuario.cadastrar(usuario);
   })
+
+  // ... (outros handlers de usuario)
+
+  // Serviços IPC
+  ipcMain.handle("servicos:listar", async (event, params) => {
+    return await controlerServico.listar(params);
+  })
+
+
 
   ipcMain.handle("usuarios:editar", async (event, usuario) => {
     const resultado = await controlerUsuario.atualizarUsuario(usuario);
@@ -84,9 +92,7 @@ app.whenReady().then(() => {
   })
 
   // Serviços IPC
-  ipcMain.handle("servicos:listar", async () => {
-    return await controlerServico.listar();
-  })
+
 
   ipcMain.handle("servicos:sincronizar", async () => {
     return await controlerServico.sincronizar();
@@ -106,8 +112,7 @@ app.whenReady().then(() => {
     const isOnline = net.isOnline();
     if (isOnline) {
       console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
-      const dados = await SyncService.sincronizar('usuarios');
-      await controlerUsuario.cadastrarLocalmente(dados)
+      await controlerUsuario.usuarioModel.cadastrarLocalmente(dados)
 
       const dadosServicos = await SyncService.sincronizar('servicos');
       if (dadosServicos.success && dadosServicos.dados.data) {

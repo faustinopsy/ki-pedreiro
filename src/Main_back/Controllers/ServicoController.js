@@ -6,8 +6,8 @@ class ServicoController {
         this.ServicoModel = new Servicos();
     }
 
-    listar() {
-        return this.ServicoModel.listar();
+    listar(params) {
+        return this.ServicoModel.listar(params);
     }
 
     async sincronizar() {
