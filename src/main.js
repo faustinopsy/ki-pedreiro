@@ -112,7 +112,7 @@ app.whenReady().then(() => {
     const isOnline = net.isOnline();
     if (isOnline) {
       console.log('[Main] Aplicativo iniciado com internet. Iniciando sincronização automática...');
-      await controlerUsuario.usuarioModel.cadastrarLocalmente(dados)
+      await controlerUsuario.cadastrarLocalmente(dados)
 
       const dadosServicos = await SyncService.sincronizar('servicos');
       if (dadosServicos.success && dadosServicos.dados.data) {
