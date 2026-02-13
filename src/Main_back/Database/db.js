@@ -20,8 +20,21 @@ export function initDatabase() {
       atualizado_em DATETIME,
       excluido_em DATETIME -- Se estiver preenchido, o registro foi "deletado"
     );
+
+    CREATE TABLE IF NOT EXISTS servicos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome_servico TEXT,
+      descricao_servico TEXT,
+      foto_servico TEXT,
+      caminho_imagem TEXT,
+      image_base64 TEXT,
+      sync_status INTEGER DEFAULT 0,
+      criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+      atualizado_em DATETIME,
+      excluido_em DATETIME
+    );
   `);
-  
+
   console.log('Banco de dados inicializado em:', dbPath);
 }
 

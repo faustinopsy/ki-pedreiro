@@ -1,20 +1,37 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Desktop kipedreiro</title>
-  </head>
-  <body>
-   <div id="app"></div>
-   <nav>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Ki-Pedreiro Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="global-spinner" class="spinner-overlay hidden">
+    <div class="spinner"></div>
+  </div>
+  <div id="layout">
+    <nav id="sidebar">
+      <div class="logo">
+        <h2>Ki-Pedreiro</h2>
+      </div>
       <ul>
-          <li><a href="#usuario_menu">Usuários</a></li>
-          <li><a href="#usuario_listar">Lista usuarios</a></li>
+        <li><a href="#usuario_menu">Dashboard</a></li>
+        <li><a href="#usuario_listar">Usuários</a></li>
+        <li><a href="#servico_listar">Serviços</a></li>
       </ul>
-      <button id="toggle-dark-mode">Toggle Dark Mode</button>
-      <p id="theme-source"></p>
-      <p>Conexão: <strong id='status'></strong></p>
-   </nav>
-    <script type="module" src="/src/renderer.js"></script>
-  </body>
+      <div class="nav-footer">
+        <button id="toggle-dark-mode" class="btn-icon" aria-label="Toggle Dark Mode">Theme</button>
+        <p id="theme-source"></p>
+        <p><small>Status: <strong id='status'>Online</strong></small></p>
+      </div>
+    </nav>
+    <main id="app"></main>
+  </div>
+  <script type="module" src="/src/renderer.js"></script>
+</body>
+
 </html>
