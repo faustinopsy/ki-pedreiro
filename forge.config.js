@@ -3,9 +3,12 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
   packagerConfig: {
-    asar: true,
+    prune: false,
+    asar: false, // Desabilitado temporariamente para debug
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    extraModules: ['better-sqlite3'],
+  },
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
@@ -28,11 +31,8 @@ module.exports = {
     {
       name: '@electron-forge/plugin-vite',
       config: {
-        // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
-        // If you are familiar with Vite configuration, it will look really familiar.
         build: [
           {
-            // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
             entry: 'src/main.js',
             config: 'vite.main.config.mjs',
             target: 'main',
@@ -51,8 +51,6 @@ module.exports = {
         ],
       },
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
@@ -60,7 +58,29 @@ module.exports = {
       [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
       [FuseV1Options.EnableNodeCliInspectArguments]: false,
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-      [FuseV1Options.OnlyLoadAppFromAsar]: true,
+      [FuseV1Options.OnlyLoadAppFromAsar]: false,
     }),
   ],
+  hooks: {
+    packageAfterPrune: async (config, buildPath) => {
+      const fs = require('fs');
+      const path = require('path');
+      const betterSqlite3Path = path.join(__dirname, 'node_modules', 'better-sqlite3');
+      const destNodeModules = path.join(buildPath, 'node_modules');
+      const destPath = path.join(destNodeModules, 'better-sqlite3');
+
+      if (!fs.existsSync(destNodeModules)) {
+        fs.mkdirSync(destNodeModules, { recursive: true });
+      }
+
+      if (fs.existsSync(betterSqlite3Path)) {
+        console.log(`[Hook] Copiando better-sqlite3 para ${destPath}...`);
+        fs.cpSync(betterSqlite3Path, destPath, { recursive: true });
+        console.log('[Hook] better-sqlite3 copiado com sucesso.');
+      } else {
+        console.warn('[Hook] better-sqlite3 não encontrado em node_modules!');
+        throw new Error('better-sqlite3 missing in dev node_modules');
+      }
+    },
+  },
 };
