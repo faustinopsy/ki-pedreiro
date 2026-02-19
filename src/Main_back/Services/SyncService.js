@@ -16,8 +16,7 @@ class SyncService {
     }
 
     try {
-
-      console.log('[Sync] Enviando...');
+      console.log(`[Sync] Enviando requisição para ${url}...`);
       const response = await fetch(`${API_URL}${url}`, {
         method: 'GET',
         headers: {
@@ -26,15 +25,29 @@ class SyncService {
         },
       });
 
-      if (!response.ok) throw new Error('Erro no servidor PHP');
+      // Lê como texto para não crashar se a API retornar HTML de erro PHP
+      const rawText = await response.text();
 
-      const data = await response.json();
-      console.log('[Sync] Resposta recebida:', data.data);
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch (_) {
+        console.warn(`[Sync] Resposta não-JSON de "${url}":`, rawText.substring(0, 150));
+        return { success: false, error: 'non_json_response' };
+      }
 
+      if (!response.ok) {
+        console.error(`[Sync] Erro HTTP ${response.status} em "${url}"`, data);
+        return { success: false, error: `HTTP ${response.status}` };
+      }
+
+      // Log discreto para não poluir
+      const qtd = data.data?.length || (Array.isArray(data.data?.data) ? data.data.data.length : 0) || 0;
+      console.log(`[Sync] Resposta recebida de ${url}: ${qtd} itens.`);
       return { success: true, dados: data };
 
     } catch (error) {
-      console.error('[Sync] Erro:', error);
+      console.error('[Sync] Erro de rede:', error.message);
       return { success: false, error: error.message };
     }
   }
@@ -84,16 +97,17 @@ class SyncService {
           payload = {
             "nome_usuario": item.nome_usuario,
             "email_usuario": item.email_usuario,
-            "senha_usuario": item.senha_usuario || '', // Enviar vazio se não tiver, conforme pedido
-            "tipo_usuario": item.tipo_usuario,
-            "status_usuario": 'ativo' // Hardcoded conforme pedido ou inferido
+            "senha_usuario": item.senha_usuario || '',
+            "tipo_usuario": item.tipo_usuario || 'user',
+            "status_usuario": 'ativo'
           };
         } else if (tipo === 'servicos') {
           payload = {
             "nome_servico": item.nome_servico,
             "descricao_servico": item.descricao_servico || "",
             "foto_servico": item.foto_servico || "",
-            "caminho_imagem": item.caminho_imagem || ""
+            "caminho_imagem": item.caminho_imagem || "",
+            "image_base64": item.image_base64 || null
           };
         }
 

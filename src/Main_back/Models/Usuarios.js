@@ -75,19 +75,20 @@ class Usuarios {
   async atualizar(usuarioAtualizado) {
     console.log('atualizar no model', usuarioAtualizado);
     const stmt = db.prepare(`UPDATE usuarios 
-       SET nome = ?,
+       SET nome_usuario = ?,
        email_usuario = ?,
+       tipo_usuario = ?,
        atualizado_em = CURRENT_TIMESTAMP,
        sync_status = 0 
        WHERE uuid = ?`
     );
     const info = stmt.run(
-      usuarioAtualizado.nome,
+      usuarioAtualizado.nome_usuario,
       usuarioAtualizado.email_usuario,
+      usuarioAtualizado.tipo_usuario || 'user',
       usuarioAtualizado.uuid
     );
     return info.changes;
-
   }
 
   async remover(usuario) {

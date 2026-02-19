@@ -24,17 +24,17 @@ class UsuariosView {
                     </div>
 
                     <div class="actions-grid">
-                        <a href="#usuario_criar" class="dashboard-btn primary">
-                            <span class="icon">+</span>
-                            <span class="text">Novo Usuário</span>
-                        </a>
                         <a href="#usuario_listar" class="dashboard-btn secondary">
                             <span class="icon">≡</span>
                             <span class="text">Listar Usuários</span>
                         </a>
-                        <a href="#servico_listar" class="dashboard-btn accent" style="background-color: #e67e22; color: white;">
+                        <a href="#servico_listar" class="dashboard-btn accent" style="background-color: #e67e22; color: white; border-color:#e67e22;">
                             <span class="icon">⚒</span>
                             <span class="text">Serviços</span>
+                        </a>
+                        <a href="#orcamento_listar" class="dashboard-btn accent" style="background-color: #27ae60; color: white; border-color:#27ae60;">
+                            <span class="icon">📋</span>
+                            <span class="text">Orçamentos</span>
                         </a>
                     </div>
                 </div>`;
