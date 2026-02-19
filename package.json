@@ -34,5 +34,20 @@
     "better-sqlite3": "^12.4.6",
     "electron-squirrel-startup": "^1.0.1",
     "sweetalert2": "^11.26.3"
+  },
+  "build": {
+  "appId": "com.ki-pedreiro.id",
+  "productName": "NomeDoSeuApp",
+  "mac": {
+    "icon": "build/icon.icns"
+  },
+  "win": {
+    "icon": "build/icon.ico",
+    "target": "nsis"
+  },
+  "linux": {
+    "icon": "build/icon.png"
   }
+}
+
 }

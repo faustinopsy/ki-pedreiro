@@ -1,21 +1,22 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, net } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import UsuarioController from './Main_back/Controllers/UsuarioController.js';
 import ServicoController from './Main_back/Controllers/ServicoController.js';
-import APIFetch from './Main_back/Services/APIFetch.js';
+import OrcamentoController from './Main_back/Controllers/OrcamentoController.js';
 import { initDatabase } from './Main_back/Database/db.js';
-if (started) {
-  app.quit();
-}
+import SyncService from './Main_back/Services/SyncService.js';
+
+if (started) app.quit();
+
 const controlerUsuario = new UsuarioController();
-const apiremoto = new APIFetch();
+const controlerServico = new ServicoController();
+const controlerOrcamento = new OrcamentoController();
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
-    height: 600,
+    height: 700,
     transparent: false,
     alwaysOnTop: false,
     resizable: true,
@@ -28,76 +29,113 @@ const createWindow = () => {
     },
   });
 
-  // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
   createWindow();
   initDatabase();
+
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-ipcMain.handle('dark-mode:toggle', () => {
-  if (nativeTheme.shouldUseDarkColors) {
-    nativeTheme.themeSource = 'light'
-  } else {
-    nativeTheme.themeSource = 'dark'
+  // ── Dark Mode ────────────────────────────────────────────────
+  ipcMain.handle('dark-mode:toggle', () => {
+    nativeTheme.themeSource = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
+    return nativeTheme.shouldUseDarkColors;
+  });
+
+  // ── Usuários ─────────────────────────────────────────────────
+  ipcMain.handle("usuarios:listar", async (_, params) =>
+    controlerUsuario.listar(params));
+
+  ipcMain.handle("usuarios:cadastrar", async (_, usuario) =>
+    controlerUsuario.cadastrar(usuario));
+
+  ipcMain.handle("usuarios:buscarPorId", async (_, uuid) =>
+    controlerUsuario.buscarUsuarioPorId(uuid));
+
+  ipcMain.handle("usuarios:editar", async (_, usuario) =>
+    controlerUsuario.atualizarUsuario(usuario));
+
+  ipcMain.handle("usuarios:removerusuario", async (event, uuid) => {
+    return await controlerUsuario.removerUsuario(uuid);
+  })
+
+  ipcMain.handle("usuarios:sincronizar", async () => {
+    return await controlerUsuario.sincronizar();
+  })
+
+  ipcMain.handle("usuarios:dashboardStats", async () =>
+    controlerUsuario.obterDadosDashboard());
+
+  // ── Serviços ──────────────────────────────────────────────────
+  ipcMain.handle("servicos:listar", async (_, params) =>
+    controlerServico.listar(params));
+
+  ipcMain.handle("servicos:cadastrar", async (_, servico) =>
+    controlerServico.cadastrar(servico));
+
+  ipcMain.handle("servicos:editar", async (_, servico) =>
+    controlerServico.editar(servico));
+
+  ipcMain.handle("servicos:excluir", async (_, id) =>
+    controlerServico.excluir(id));
+
+  ipcMain.handle("servicos:sincronizar", async () =>
+    controlerServico.sincronizar());
+
+  ipcMain.handle("servicos:listarTrabalho", async () =>
+    controlerOrcamento.listarServicosTrabalho());
+
+  // ── Orçamentos ────────────────────────────────────────────────
+  ipcMain.handle("orcamentos:listar", async (_, params) =>
+    controlerOrcamento.listar(params));
+
+  ipcMain.handle("orcamentos:cadastrar", async (_, orcamento) =>
+    controlerOrcamento.cadastrar(orcamento));
+
+  ipcMain.handle("orcamentos:editar", async (_, orcamento) =>
+    controlerOrcamento.editar(orcamento));
+
+  ipcMain.handle("orcamentos:excluir", async (_, id) =>
+    controlerOrcamento.excluir(id));
+
+  ipcMain.handle("orcamentos:buscar", async (_, id) =>
+    controlerOrcamento.buscarPorId(id));
+
+  ipcMain.handle("orcamentos:listarClientes", async () =>
+    controlerOrcamento.listarClientes());
+
+  // ── Auto-Sync (1 min) ────────────────────────────────────────
+  async function sincronizarSeOnline() {
+    if (!net.isOnline()) return;
+    console.log('[Main] Online. Executando sync inicial...');
+    const dadosServicos = await SyncService.sincronizar('servicos');
+    if (dadosServicos.success && dadosServicos.dados?.data) {
+      controlerServico.ServicoModel.cadastrarLocalmente(dadosServicos.dados.data);
+    }
   }
-  return nativeTheme.shouldUseDarkColors
-})
+  sincronizarSeOnline();
 
-ipcMain.handle("usuarios:buscarPorId", async (event, uuid) => {
-  return await controlerUsuario.buscarUsuarioPorId(uuid);
-})
+  const syncInterval = setInterval(async () => {
+    console.log('[Main] Auto-sync...');
+    await SyncService.enviarDadosLocais('usuariosalvar');
+    await SyncService.enviarDadosLocais('servicos');
+    const dadosServicos = await SyncService.sincronizar('servicos');
+    if (dadosServicos.success && dadosServicos.dados?.data) {
+      controlerServico.ServicoModel.cadastrarLocalmente(dadosServicos.dados.data);
+    }
+  }, 60_000);
 
-ipcMain.handle("usuarios:removerusuario", async (event, uuid) => {
-  return await controlerUsuario.removerUsuario(uuid);
-})
-
-ipcMain.handle("usuarios:listar", async () => {
-  return await controlerUsuario.listar();
-})
-
-ipcMain.handle("usuarios:cadastrar", async (event, usuario) => {
-   const resultado = await controlerUsuario.cadastrar(usuario);
-   return resultado;
-})
-
-ipcMain.handle("usuarios:editar", async (event, usuario) => {
-   const resultado = await controlerUsuario.atualizarUsuario(usuario);
-   return resultado;
-})
-
-
-async function buscarUsuariosRemoto(){
-  const resultado = await apiremoto.fetch("usuarios");
-  await controlerUsuario.sincronizarAPIlocal(resultado.data.data)
-}
-buscarUsuariosRemoto()
-
-
+  app.on('before-quit', () => clearInterval(syncInterval));
 });
 
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
