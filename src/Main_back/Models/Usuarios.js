@@ -4,6 +4,7 @@ class Usuarios {
   constructor() { }
   adicionar(usuario) {
     const uuid = crypto.randomUUID();
+    const sincronizacao = usuario.sync_status || 0;
     const stmt = db.prepare(`
       INSERT INTO usuarios (uuid, nome_usuario, email_usuario, tipo_usuario, sync_status)
       VALUES (?, ?, ?, ?, ?)
