@@ -4,10 +4,9 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     prune: false,
-    asar: true, // Desabilitado temporariamente para debug
     asar: {
-    unpack: "**/node_modules/better-sqlite3/**"
-  }
+      unpack: "**/node_modules/better-sqlite3/**"
+    },
   },
   rebuildConfig: {
     extraModules: ['better-sqlite3'],
@@ -32,7 +31,11 @@ module.exports = {
   ],
   plugins: [
     {
-    name: '@electron-forge/plugin-auto-unpack-natives',
+      name: '@electron-forge/plugin-auto-unpack-natives',
+      config: {},
+    },
+    {
+      name: '@electron-forge/plugin-vite',
       config: {
         build: [
           {
